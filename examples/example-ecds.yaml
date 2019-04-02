@@ -1,27 +1,99 @@
 apiVersion: kubedgeoperators.kubedge.cloud/v1alpha1
 kind: ECDSCluster
 metadata:
-  name: upgrade-phase
+  name: kubedge-ecds-cluster
 spec:
-  openstackServiceName: testservice
-  targetOpenstackServiceVersion: moc.version.to.upgrade.to
   targetState: deployed
   source:
     type: local
     location: /opt/kubedge-operators/test-pods/busybox.yaml
-    subpath: .
-
-  storageType: offsite
-  backupPolicy:
-    timeoutInSecond: 3
-  # ceph:
-  #   cephSecret: thesecret
-  #   path: example
-  clientTLSSecret: client.crt
-  offsite:
-    endpoint: sftp://foo.bar
-    forcePathStyle: true
-    offsiteSecret: thesecret
-    path: xxx
-  openstackEndpoints:
-  - https://local.com
+  businessLogics:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: kubedge-ecds-businesslogic
+    template:
+      metadata:
+        labels:
+          name: kubedge-ecds-businesslogic
+      spec:
+        containers:
+        - name: ecds-businessLogic
+          image: hack4easy/ecds-businesslogic-amd64:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/execution-context"]
+          args: ["businesslogic"]
+          ports:
+            - containerPort: 8082
+  enrichments:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: kubedge-ecds-enrichment
+    template:
+      metadata:
+        labels:
+          name: kubedge-ecds-enrichment
+      spec:
+        containers:
+        - name: ecds-enrichment
+          image: hack4easy/ecds-enrichment-amd64:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/execution-context"]
+          args: ["enrichment"]
+          ports:
+            - containerPort: 8083
+  frontEnds:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: kubedge-ecds-frontend
+    template:
+      metadata:
+        labels:
+          name: kubedge-ecds-frontend
+      spec:
+        containers:
+        - name: ecds-frontEnd
+          image: hack4easy/ecds-frontend-amd64:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/execution-context"]
+          args: ["frontEnd"]
+          ports:
+            - containerPort: 8084
+  loadbalancers:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: kubedge-ecds-loadbalancer
+    template:
+      metadata:
+        labels:
+          name: kubedge-ecds-loadbalancer
+      spec:
+        containers:
+        - name: ecds-loadbalancer
+          image: hack4easy/ecds-loadbalancer-amd64:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/execution-context"]
+          args: ["loadbalancer"]
+          ports:
+            - containerPort: 8085
+  platforms:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: kubedge-ecds-platform
+    template:
+      metadata:
+        labels:
+          name: kubedge-ecds-platform
+      spec:
+        containers:
+        - name: ecds-platform
+          image: hack4easy/ecds-platform-amd64:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/execution-context"]
+          args: ["platform"]
+          ports:
+            - containerPort: 8086
