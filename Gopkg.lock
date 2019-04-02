@@ -324,8 +324,7 @@
   version = "v1.1.6"
 
 [[projects]]
-  branch = "master"
-  digest = "1:64ac0b0f50a79672039237a013655131787f824bce97a68d7709fc473da50481"
+  digest = "1:5a9199f935b9a4a24987397b09a3022c516a8c872c9a36686de03c1f2632ac35"
   name = "github.com/kubedge/kubedge-operator-base"
   packages = [
     "pkg/apis",
@@ -334,7 +333,8 @@
     "pkg/kubedgemanager",
   ]
   pruneopts = "NT"
-  revision = "35704f1a285086fd61ed34bc1d3db6210e9fa4cd"
+  revision = "416345f5da5351951763d974ece49c1537d02cf5"
+  version = "v0.1.4"
 
 [[projects]]
   branch = "master"
@@ -430,7 +430,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1cc09ef62949757cd67d720faaa05708b8573e37d8c62c12480a96c88a349342"
+  digest = "1:68aaa3b92b055ad70c5e59aff4df53fb0a7975de5961632912a051be4fb9b1c5"
   name = "github.com/operator-framework/operator-sdk"
   packages = [
     "pkg/k8sutil",
@@ -439,7 +439,7 @@
     "version",
   ]
   pruneopts = "NT"
-  revision = "e2aec8e8af7904e0ab23f4e88b10b1e77d47d828"
+  revision = "83f710b98bf2298870c8cb46111bb58f6d366836"
 
 [[projects]]
   digest = "1:93b1d84c5fa6d1ea52f4114c37714cddd84d5b78f151b62bb101128dd51399bf"
@@ -625,14 +625,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d758a7035f59cc59b8b1380e0dcfdde798bee43db2156a2f24f37edf2d575fde"
+  digest = "1:e2fd9ef1691f1a2731d69db8b523d1b6c88ec583f56e3bd40e3468948b5418e6"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "NT"
-  revision = "9eb1bfa1ce65ae8a6ff3114b0aaf9a41a6cf3560"
+  revision = "baf5eb976a8cd65845293cd814ea151018552292"
 
 [[projects]]
   digest = "1:8c74f97396ed63cc2ef04ebb5fc37bb032871b8fd890a25991ed40974b00cd2a"
@@ -680,7 +680,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:e7aee9cc1e6a7c560e93d1ceea331a6955b66e90a6a08cfd8ba9d01044f92d24"
+  digest = "1:96e3ac781a5a6e8c33181a21f42fe22934bb2972b092b917e2d67b97721eebc8"
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
@@ -696,7 +696,7 @@
     "internal/semver",
   ]
   pruneopts = "NT"
-  revision = "aef51cc3777c6a88d6834b42444edffdac4860fa"
+  revision = "b7e8f894e31a2c38d0fcb029c1a9584e8d66319b"
 
 [[projects]]
   digest = "1:711179d92dbef98932acd7afd0dab80b4cf2d97f099f3285c9ba8fa451809fec"
@@ -1048,8 +1048,13 @@
     "pkg/runtime/signals",
     "pkg/source",
     "pkg/source/internal",
+    "pkg/webhook",
     "pkg/webhook/admission",
     "pkg/webhook/admission/types",
+    "pkg/webhook/internal/cert",
+    "pkg/webhook/internal/cert/generator",
+    "pkg/webhook/internal/cert/writer",
+    "pkg/webhook/internal/cert/writer/atomic",
     "pkg/webhook/internal/metrics",
     "pkg/webhook/types",
   ]
@@ -1058,7 +1063,7 @@
   version = "v0.1.10"
 
 [[projects]]
-  digest = "1:b58011a29b31448c02cbc80d0f85f8a5d49b1d1e005673c674f38596a5092e40"
+  digest = "1:a406630351072b54551d47722bd574e67b6ff1f8599056900b2db939b2664ebf"
   name = "sigs.k8s.io/controller-tools"
   packages = [
     "cmd/controller-gen",
@@ -1070,10 +1075,11 @@
     "pkg/rbac",
     "pkg/util",
     "pkg/webhook",
+    "pkg/webhook/internal",
   ]
   pruneopts = "NT"
-  revision = "b8adde9bc6d7f3fba449d306613a9daed23676c8"
-  version = "v0.1.10"
+  revision = "fbf141159251d035089e7acdd5a343f8cec91b94"
+  version = "v0.1.9"
 
 [[projects]]
   digest = "1:8730e0150dfb2b7e173890c8b9868e7a273082ef8e39f4940e3506a481cf895c"
