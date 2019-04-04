@@ -1,0 +1,210 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: businesslogic
+  # namespace: ecds
+  labels:
+    app: businesslogic
+spec:
+  ports:
+  - port: 80
+    name: businesslogic
+  clusterIP: None
+  selector:
+    app: businesslogic
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: businesslogic
+  # namespace: ecds
+spec:
+  selector:
+    matchLabels:
+      app: businesslogic # has to match .spec.template.metadata.labels
+  serviceName: businesslogic
+  replicas: 3 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: businesslogic # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: businesslogic
+        image: busybox
+        command:
+        - sleep
+        - "3600"
+        ports:
+        - containerPort: 80
+          name: businesslogic
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enrichment
+  # namespace: ecds
+  labels:
+    app: enrichment
+spec:
+  ports:
+  - port: 80
+    name: enrichment
+  clusterIP: None
+  selector:
+    app: enrichment
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: enrichment
+  # namespace: ecds
+spec:
+  selector:
+    matchLabels:
+      app: enrichment # has to match .spec.template.metadata.labels
+  serviceName: enrichment
+  replicas: 3 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: enrichment # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: enrichment
+        image: busybox
+        command:
+        - sleep
+        - "3600"
+        ports:
+        - containerPort: 80
+          name: enrichment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  # namespace: ecds
+  labels:
+    app: frontend
+spec:
+  ports:
+  - port: 80
+    name: frontend
+  clusterIP: None
+  selector:
+    app: frontend
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: frontend
+  # namespace: ecds
+spec:
+  selector:
+    matchLabels:
+      app: frontend # has to match .spec.template.metadata.labels
+  serviceName: frontend
+  replicas: 3 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: frontend # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: frontend
+        image: busybox
+        command:
+        - sleep
+        - "3600"
+        ports:
+        - containerPort: 80
+          name: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer
+  # namespace: ecds
+  labels:
+    app: loadbalancer
+spec:
+  ports:
+  - port: 80
+    name: loadbalancer
+  clusterIP: None
+  selector:
+    app: loadbalancer
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: loadbalancer
+  # namespace: ecds
+spec:
+  selector:
+    matchLabels:
+      app: loadbalancer # has to match .spec.template.metadata.labels
+  serviceName: loadbalancer
+  replicas: 3 # by default is 1
+  template:
+    metadata:
+      labels:
+        app: loadbalancer # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: loadbalancer
+        image: busybox
+        command:
+        - sleep
+        - "3600"
+        ports:
+        - containerPort: 80
+          name: loadbalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: platform
+  # namespace: ecds
+  labels:
+    app: platform
+spec:
+  ports:
+  - port: 80
+    name: platform
+  clusterIP: None
+  selector:
+    app: platform
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: platform
+  # namespace: ecds
+spec:
+  selector:
+    matchLabels:
+      app: platform # has to match .spec.template.metadata.labels
+  serviceName: platform
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: platform # has to match .spec.selector.matchLabels
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: platform
+        image: busybox
+        command:
+        - sleep
+        - "3600"
+        ports:
+        - containerPort: 80
+          name: platform

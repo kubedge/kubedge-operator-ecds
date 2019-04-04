@@ -11,7 +11,7 @@ COPY build/bin /usr/local/bin
 
 RUN  /usr/local/bin/user_setup
 
-COPY build/test-pods /opt/kubedge-operators/test-pods
+COPY build/ecds-templates /opt/kubedge-operators/ecds-templates
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
 
