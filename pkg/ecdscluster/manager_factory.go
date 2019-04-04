@@ -71,7 +71,7 @@ func (f managerFactory) NewECDSClusterManager(r *av1.ECDSCluster) bmgr.KubedgeRe
 	return &rollbackmanager{
 		KubedgeBaseManager: bmgr.KubedgeBaseManager{
 			KubeClient:     f.kubeClient,
-			Renderer:       bmgr.NewOwnerRefRenderer(ownerRefs, "osrbck", renderFiles, renderValues),
+			Renderer:       bmgr.NewKubedgeBaseRenderer(ownerRefs, "ecds", renderFiles, renderValues),
 			Source:         r.Spec.Source,
 			PhaseName:      r.GetName(),
 			PhaseNamespace: r.GetNamespace()},
