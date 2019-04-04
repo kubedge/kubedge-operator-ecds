@@ -324,7 +324,7 @@
   version = "v1.1.6"
 
 [[projects]]
-  digest = "1:5a9199f935b9a4a24987397b09a3022c516a8c872c9a36686de03c1f2632ac35"
+  digest = "1:883905a7947f0f337b499b652059c0ae3ea6f0317fb02c541537a36f43b2f1b4"
   name = "github.com/kubedge/kubedge-operator-base"
   packages = [
     "pkg/apis",
@@ -333,12 +333,12 @@
     "pkg/kubedgemanager",
   ]
   pruneopts = "NT"
-  revision = "416345f5da5351951763d974ece49c1537d02cf5"
-  version = "v0.1.4"
+  revision = "adcaed276ea1a44f530a5b43a40b4c9c1b0c0190"
+  version = "v0.1.5"
 
 [[projects]]
   branch = "master"
-  digest = "1:1832b664bdd6ff3139a8590c907044d7d440cd10fa46979d89fe98a11b75b256"
+  digest = "1:782fb677791a7fe7b5b8e637bcf695efb13950ce09e3e8e3b1cf21c57649be7c"
   name = "github.com/mailru/easyjson"
   packages = [
     "buffer",
@@ -346,7 +346,7 @@
     "jwriter",
   ]
   pruneopts = "NT"
-  revision = "1de009706dbeb9d05f18586f0735fcdb7c524481"
+  revision = "1ea4449da9834f4d333f1cc461c374aea217d249"
 
 [[projects]]
   digest = "1:56dbf15e091bf7926cb33a57cb6bdfc658fc6d3498d2f76f10a97ce7856f1fde"
@@ -430,7 +430,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:68aaa3b92b055ad70c5e59aff4df53fb0a7975de5961632912a051be4fb9b1c5"
+  digest = "1:1bbb874e68684023790f6e9976928216c3fe4734db0497c625a56e868ae0a7c1"
   name = "github.com/operator-framework/operator-sdk"
   packages = [
     "pkg/k8sutil",
@@ -439,7 +439,7 @@
     "version",
   ]
   pruneopts = "NT"
-  revision = "83f710b98bf2298870c8cb46111bb58f6d366836"
+  revision = "6d26d943e58cbf9016ab0a34ba6acb4a524aa47c"
 
 [[projects]]
   digest = "1:93b1d84c5fa6d1ea52f4114c37714cddd84d5b78f151b62bb101128dd51399bf"
@@ -507,14 +507,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:9b88d30d00199d49df4290b275cdd9be4871d1e9bdac2b2030880c7d9fc3c522"
+  digest = "1:75f1b9f32d4d204eac68f3427bc4642453fb4fe20f1596ec058757f01dc16e7b"
   name = "github.com/prometheus/procfs"
   packages = ["."]
   pruneopts = "NT"
-  revision = "af7bedc223fba51343f25a6fa7aba84355d0357a"
+  revision = "ea9eea63887261e4d8ed8315f4078e88d540c725"
 
 [[projects]]
-  digest = "1:fcef1ce61da6f8f6f115154fb0e0e5b159fe11656839ba1e6061372711c013ee"
+  digest = "1:a4644e85e1f29f9825a4e61dcdd8244fe7c4db02eead3f508d5a5bdf7924dbbd"
   name = "github.com/rogpeppe/go-internal"
   packages = [
     "modfile",
@@ -522,8 +522,8 @@
     "semver",
   ]
   pruneopts = "NT"
-  revision = "1cf9852c553c5b7da2d5a4a091129a7822fed0c9"
-  version = "v1.2.2"
+  revision = "438578804ca6f31be148c27683afc419ce47c06e"
+  version = "v1.3.0"
 
 [[projects]]
   digest = "1:49b6e0d199dc20969bf7c9d14647313e1dd1b102178fad4ca999d8a9584edfab"
@@ -589,11 +589,11 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "NT"
-  revision = "a5d413f7728c81fb97d96a2b722368945f651e78"
+  revision = "8e1b8d32e692162a446e97250c5d34f5a52efed6"
 
 [[projects]]
   branch = "master"
-  digest = "1:318eeba3eb64a2c2b6fdaa988b6d08dadde9ec7b6ff909d72dd87735be65f7d9"
+  digest = "1:63708a2bcd353bb6b8392bf265d125c6a11ba8ae284e3548ef75360f11118fdd"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -607,11 +607,11 @@
     "idna",
   ]
   pruneopts = "NT"
-  revision = "74de082e2cca95839e88aa0aeee5aadf6ce7710f"
+  revision = "b630fd6fe46bcfc98f989005d8b8ec1400e60a6e"
 
 [[projects]]
   branch = "master"
-  digest = "1:b84971d4821db3a4e63952059b159d9ff27ea373903d1545b02f7984469c8f92"
+  digest = "1:54c605b4036ec49dbc4c887969128d5ee68140cf0bbec46e67cbb2497e69c15e"
   name = "golang.org/x/oauth2"
   packages = [
     ".",
@@ -621,18 +621,18 @@
     "jwt",
   ]
   pruneopts = "NT"
-  revision = "c85d3e98c914e3a33234ad863dcbff5dbc425bb8"
+  revision = "9f3314589c9a9136388751d9adae6b0ed400978a"
 
 [[projects]]
   branch = "master"
-  digest = "1:e2fd9ef1691f1a2731d69db8b523d1b6c88ec583f56e3bd40e3468948b5418e6"
+  digest = "1:362fa3a89bca5a2655eb2ef710cff1f21e7c3e5bc3fc09303d9d77b4811c04c7"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "NT"
-  revision = "baf5eb976a8cd65845293cd814ea151018552292"
+  revision = "81d4e9dc473e5e8c933f2aaeba2a3d81efb9aed2"
 
 [[projects]]
   digest = "1:8c74f97396ed63cc2ef04ebb5fc37bb032871b8fd890a25991ed40974b00cd2a"
@@ -680,7 +680,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:96e3ac781a5a6e8c33181a21f42fe22934bb2972b092b917e2d67b97721eebc8"
+  digest = "1:8a3b1de2b039f7ae6a3d012a066c5417d92979df5cab73bc09eafd66754b5e52"
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
@@ -696,7 +696,7 @@
     "internal/semver",
   ]
   pruneopts = "NT"
-  revision = "b7e8f894e31a2c38d0fcb029c1a9584e8d66319b"
+  revision = "923d25813098b2ffdf1b4bb7ee4ec425fef796a9"
 
 [[projects]]
   digest = "1:711179d92dbef98932acd7afd0dab80b4cf2d97f099f3285c9ba8fa451809fec"
@@ -1048,13 +1048,8 @@
     "pkg/runtime/signals",
     "pkg/source",
     "pkg/source/internal",
-    "pkg/webhook",
     "pkg/webhook/admission",
     "pkg/webhook/admission/types",
-    "pkg/webhook/internal/cert",
-    "pkg/webhook/internal/cert/generator",
-    "pkg/webhook/internal/cert/writer",
-    "pkg/webhook/internal/cert/writer/atomic",
     "pkg/webhook/internal/metrics",
     "pkg/webhook/types",
   ]
@@ -1063,7 +1058,7 @@
   version = "v0.1.10"
 
 [[projects]]
-  digest = "1:a406630351072b54551d47722bd574e67b6ff1f8599056900b2db939b2664ebf"
+  digest = "1:b58011a29b31448c02cbc80d0f85f8a5d49b1d1e005673c674f38596a5092e40"
   name = "sigs.k8s.io/controller-tools"
   packages = [
     "cmd/controller-gen",
@@ -1075,11 +1070,10 @@
     "pkg/rbac",
     "pkg/util",
     "pkg/webhook",
-    "pkg/webhook/internal",
   ]
   pruneopts = "NT"
-  revision = "fbf141159251d035089e7acdd5a343f8cec91b94"
-  version = "v0.1.9"
+  revision = "b8adde9bc6d7f3fba449d306613a9daed23676c8"
+  version = "v0.1.10"
 
 [[projects]]
   digest = "1:8730e0150dfb2b7e173890c8b9868e7a273082ef8e39f4940e3506a481cf895c"
