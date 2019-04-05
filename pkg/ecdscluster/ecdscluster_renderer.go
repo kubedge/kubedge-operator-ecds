@@ -17,25 +17,83 @@ package ecdscluster
 import (
 	av1 "github.com/kubedge/kubedge-operator-base/pkg/apis/kubedgeoperators/v1alpha1"
 	bmgr "github.com/kubedge/kubedge-operator-base/pkg/kubedgemanager"
+
+	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type ecdsclusterrenderer struct {
-	bmgr.KubedgeBaseRenderer
+	base bmgr.KubedgeBaseRenderer
 
 	spec av1.ECDSClusterSpec
 }
 
+// Update the Unstructured read in the file using the content of the Spec.
+func (o ecdsclusterrenderer) updateStatefulSet(u *unstructured.Unstructured, k *av1.KubedgeSetSpec) {
+	if (k != nil) && (k.Replicas != nil) {
+
+		out := v1.StatefulSet{}
+		err1 := runtime.DefaultUnstructuredConverter.FromUnstructured(u.UnstructuredContent(), &out)
+		if err1 != nil {
+			log.Error(err1, "error converting from Unstructured")
+		}
+
+		if k.Replicas != nil {
+			out.Spec.Replicas = k.Replicas
+		}
+
+		unst, err2 := runtime.DefaultUnstructuredConverter.ToUnstructured(&out)
+		if err2 != nil {
+			log.Error(err2, "error converting to Unstructured")
+		}
+
+		u.SetUnstructuredContent(unst)
+	}
+}
+
 // Adds the ownerrefs to all the documents in a YAML file
 func (o ecdsclusterrenderer) RenderFile(name string, namespace string, fileName string) (*av1.SubResourceList, error) {
-	return nil, nil
+
+	// Let render the default resourceList using the ecds-template.yaml
+	rendered, err := o.base.RenderFile(name, namespace, fileName)
+	if err != nil {
+		return rendered, err
+	}
+
+	updated := av1.NewSubResourceList(rendered.GetNamespace(), rendered.GetName())
+
+	// Let's adapt the template using the values passed in the spec
+	for _, renderedResource := range rendered.Items {
+		if renderedResource.GetKind() == "StatefulSet" {
+			switch renderedResource.GetName() {
+			case ECBusinessLogic.String():
+				o.updateStatefulSet(&renderedResource, o.spec.BusinessLogics)
+			case ECEnrichment.String():
+				o.updateStatefulSet(&renderedResource, o.spec.Enrichments)
+			case ECFrontend.String():
+				o.updateStatefulSet(&renderedResource, o.spec.FrontEnds)
+			case ECLoadbalancer.String():
+				o.updateStatefulSet(&renderedResource, o.spec.LoadBalancers)
+			case ECPlatform.String():
+				o.updateStatefulSet(&renderedResource, o.spec.Platforms)
+			}
+			updated.Items = append(updated.Items, renderedResource)
+		} else {
+			updated.Items = append(updated.Items, renderedResource)
+		}
+	}
+
+	return updated, nil
+
 }
 
 // NewECDSClusterRenderer creates a new OwnerRef engine with a set of metav1.OwnerReferences to be added to assets
 func NewECDSClusterRenderer(refs []metav1.OwnerReference, suffix string,
 	renderFiles []string, renderValues map[string]interface{}, spec av1.ECDSClusterSpec) bmgr.KubedgeResourceRenderer {
 	return ecdsclusterrenderer{
-		KubedgeBaseRenderer: bmgr.KubedgeBaseRenderer{
+		base: bmgr.KubedgeBaseRenderer{
 			Refs:         refs,
 			Suffix:       suffix,
 			RenderFiles:  renderFiles,
