@@ -36,10 +36,10 @@ func NewECDSClusterRenderer(refs []metav1.OwnerReference, suffix string,
 	renderFiles []string, renderValues map[string]interface{}, spec av1.ECDSClusterSpec) bmgr.KubedgeResourceRenderer {
 	return ecdsclusterrenderer{
 		KubedgeBaseRenderer: bmgr.KubedgeBaseRenderer{
-			refs:         refs,
-			suffix:       suffix,
-			renderFiles:  renderFiles,
-			renderValues: renderValues,
+			Refs:         refs,
+			Suffix:       suffix,
+			RenderFiles:  renderFiles,
+			RenderValues: renderValues,
 		},
 		spec: spec,
 	}

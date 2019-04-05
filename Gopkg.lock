@@ -324,7 +324,7 @@
   version = "v1.1.6"
 
 [[projects]]
-  digest = "1:883905a7947f0f337b499b652059c0ae3ea6f0317fb02c541537a36f43b2f1b4"
+  digest = "1:db08bd953b989a2b88b8e68443ceeeea638d79b729a32520ce3a2a5a1850ed83"
   name = "github.com/kubedge/kubedge-operator-base"
   packages = [
     "pkg/apis",
@@ -333,8 +333,8 @@
     "pkg/kubedgemanager",
   ]
   pruneopts = "NT"
-  revision = "adcaed276ea1a44f530a5b43a40b4c9c1b0c0190"
-  version = "v0.1.5"
+  revision = "6444c76ce80efe0d8685a08909132857bf199613"
+  version = "v0.1.6"
 
 [[projects]]
   branch = "master"
@@ -430,7 +430,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1bbb874e68684023790f6e9976928216c3fe4734db0497c625a56e868ae0a7c1"
+  digest = "1:674610d54812d3c36ab7861fc826176bf581a9426cc09abec0107414c17f89cd"
   name = "github.com/operator-framework/operator-sdk"
   packages = [
     "pkg/k8sutil",
@@ -439,7 +439,7 @@
     "version",
   ]
   pruneopts = "NT"
-  revision = "6d26d943e58cbf9016ab0a34ba6acb4a524aa47c"
+  revision = "7e07b20c9e22560fb22a3295b612eae7652b8b14"
 
 [[projects]]
   digest = "1:93b1d84c5fa6d1ea52f4114c37714cddd84d5b78f151b62bb101128dd51399bf"
@@ -589,7 +589,7 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "NT"
-  revision = "8e1b8d32e692162a446e97250c5d34f5a52efed6"
+  revision = "38d8ce5564a5b71b2e3a00553993f1b9a7ae852f"
 
 [[projects]]
   branch = "master"
@@ -607,7 +607,7 @@
     "idna",
   ]
   pruneopts = "NT"
-  revision = "b630fd6fe46bcfc98f989005d8b8ec1400e60a6e"
+  revision = "eb5bcb51f2a31c7d5141d810b70815c05d9c9146"
 
 [[projects]]
   branch = "master"
@@ -625,14 +625,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:362fa3a89bca5a2655eb2ef710cff1f21e7c3e5bc3fc09303d9d77b4811c04c7"
+  digest = "1:8e96a559713017460666bec9a90cded46602993432b355d85d3ac0388be63b43"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "NT"
-  revision = "81d4e9dc473e5e8c933f2aaeba2a3d81efb9aed2"
+  revision = "4b34438f7a67ee5f45cc6132e2bad873a20324e9"
 
 [[projects]]
   digest = "1:8c74f97396ed63cc2ef04ebb5fc37bb032871b8fd890a25991ed40974b00cd2a"
@@ -680,7 +680,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8a3b1de2b039f7ae6a3d012a066c5417d92979df5cab73bc09eafd66754b5e52"
+  digest = "1:6f1f68837ded35f7521ec9f5052458755d5596b833a30c12e22ad914ab5e4632"
   name = "golang.org/x/tools"
   packages = [
     "go/ast/astutil",
@@ -696,7 +696,7 @@
     "internal/semver",
   ]
   pruneopts = "NT"
-  revision = "923d25813098b2ffdf1b4bb7ee4ec425fef796a9"
+  revision = "052fc3cfdbc2c9e9082b1d51f850b7974b5efb2a"
 
 [[projects]]
   digest = "1:711179d92dbef98932acd7afd0dab80b4cf2d97f099f3285c9ba8fa451809fec"
