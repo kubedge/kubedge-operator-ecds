@@ -32,7 +32,7 @@ type ecdsclusterrenderer struct {
 
 // Update the Unstructured read in the file using the content of the Spec.
 func (o ecdsclusterrenderer) updateStatefulSet(u *unstructured.Unstructured, k *av1.KubedgeSetSpec) {
-	if (k != nil) && (k.Replicas != nil) {
+	if k != nil {
 
 		out := v1.StatefulSet{}
 		err1 := runtime.DefaultUnstructuredConverter.FromUnstructured(u.UnstructuredContent(), &out)
@@ -43,6 +43,12 @@ func (o ecdsclusterrenderer) updateStatefulSet(u *unstructured.Unstructured, k *
 		if k.Replicas != nil {
 			out.Spec.Replicas = k.Replicas
 		}
+
+		if k.Selector != nil {
+			out.Spec.Selector = k.Selector.DeepCopy()
+		}
+
+		out.Spec.Template = *(k.Template.DeepCopy())
 
 		unst, err2 := runtime.DefaultUnstructuredConverter.ToUnstructured(&out)
 		if err2 != nil {
