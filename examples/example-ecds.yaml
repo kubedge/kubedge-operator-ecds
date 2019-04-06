@@ -11,89 +11,84 @@ spec:
     replicas: 1
     selector:
       matchLabels:
-        name: kubedge-ecds-businesslogic
+        name: businesslogic
     template:
       metadata:
         labels:
-          name: kubedge-ecds-businesslogic
+          name: businesslogic
       spec:
         containers:
-        - name: ecds-businessLogic
-          image: hack4easy/ecds-businesslogic-amd64:latest
+        - name: businesslogic
+          image: hack4easy/ecds-businesslogic-dev:v0.1.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/execution-context"]
-          args: ["businesslogic"]
+          command: ["/ecds-businesslogic"]
           ports:
             - containerPort: 8082
   enrichments:
     replicas: 1
     selector:
       matchLabels:
-        name: kubedge-ecds-enrichment
+        name: enrichment
     template:
       metadata:
         labels:
-          name: kubedge-ecds-enrichment
+          name: enrichment
       spec:
         containers:
-        - name: ecds-enrichment
-          image: hack4easy/ecds-enrichment-amd64:latest
+        - name: enrichment
+          image: hack4easy/ecds-enrichment-dev:v0.1.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/execution-context"]
-          args: ["enrichment"]
+          command: ["/ecds-enrichment"]
           ports:
             - containerPort: 8083
   frontEnds:
     replicas: 1
     selector:
       matchLabels:
-        name: kubedge-ecds-frontend
+        name: frontend
     template:
       metadata:
         labels:
-          name: kubedge-ecds-frontend
+          name: frontend
       spec:
         containers:
-        - name: ecds-frontEnd
-          image: hack4easy/ecds-frontend-amd64:latest
+        - name: frontend
+          image: hack4easy/ecds-frontend-dev:v0.1.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/execution-context"]
-          args: ["frontEnd"]
+          command: ["/ecds-frontend"]
           ports:
             - containerPort: 8084
   loadbalancers:
     replicas: 1
     selector:
       matchLabels:
-        name: kubedge-ecds-loadbalancer
+        name: loadbalancer
     template:
       metadata:
         labels:
-          name: kubedge-ecds-loadbalancer
+          name: loadbalancer
       spec:
         containers:
-        - name: ecds-loadbalancer
-          image: hack4easy/ecds-loadbalancer-amd64:latest
+        - name: loadbalancer
+          image: hack4easy/ecds-loadbalancer-dev:v0.1.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/execution-context"]
-          args: ["loadbalancer"]
+          command: ["/ecds-loadbalancer"]
           ports:
             - containerPort: 8085
   platforms:
     replicas: 1
     selector:
       matchLabels:
-        name: kubedge-ecds-platform
+        name: platform
     template:
       metadata:
         labels:
-          name: kubedge-ecds-platform
+          name: platform
       spec:
         containers:
-        - name: ecds-platform
-          image: hack4easy/ecds-platform-amd64:latest
+        - name: platform
+          image: hack4easy/ecds-platform-dev:v0.1.0
           imagePullPolicy: IfNotPresent
-          command: ["/bin/execution-context"]
-          args: ["platform"]
+          command: ["/ecds-platform"]
           ports:
             - containerPort: 8086
