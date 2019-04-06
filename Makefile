@@ -94,13 +94,13 @@ install-dev: docker-build-dev
 	helm install --name kubedge-ecds-operator chart --set images.tags.operator=${IMG_DEV}
 
 install-amd64:
-	helm install --name kubedge-ecds-operator chart --set images.tags.operator=${IMG_AMD64}
+	helm install --name kubedge-ecds-operator chart --set images.tags.operator=${IMG_AMD64},images.pull_policy=Always
 
 install-arm32v7:
-	helm install --name kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM32V7}
+	helm install --name kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM32V7},images.pull_policy=Always
 
 install-arm64v8:
-	helm install --name kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM64V8}
+	helm install --name kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM64V8},images.pull_policy=Always
 
 purge: setup
 	helm delete --purge kubedge-ecds-operator
