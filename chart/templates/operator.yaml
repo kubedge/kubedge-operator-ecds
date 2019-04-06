@@ -19,7 +19,7 @@ spec:
           # Replace this with the built image name
           image: {{ .Values.images.tags.operator }}
           command:
-          - kubedge-ecds-operator
+          - /usr/local/bin/kubedge-ecds-operator
           imagePullPolicy: {{ .Values.images.pullPolicy }}
           env:
             - name: WATCH_NAMESPACE
