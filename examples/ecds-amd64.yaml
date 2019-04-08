@@ -1,0 +1,94 @@
+apiVersion: kubedgeoperators.kubedge.cloud/v1alpha1
+kind: ECDSCluster
+metadata:
+  name: kubedge-ecds-cluster
+spec:
+  targetState: deployed
+  source:
+    type: local
+    location: /opt/kubedge-operators/ecds-templates/classic.yaml
+  businessLogics:
+    replicas: 4
+    selector:
+      matchLabels:
+        name: businesslogic
+    template:
+      metadata:
+        labels:
+          name: businesslogic
+      spec:
+        containers:
+        - name: businesslogic
+          image: hack4easy/ecds-businesslogic-amd64:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-businesslogic"]
+          ports:
+            - containerPort: 8082
+  enrichments:
+    replicas: 2
+    selector:
+      matchLabels:
+        name: enrichment
+    template:
+      metadata:
+        labels:
+          name: enrichment
+      spec:
+        containers:
+        - name: enrichment
+          image: hack4easy/ecds-enrichment-amd64:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-enrichment"]
+          ports:
+            - containerPort: 8083
+  frontEnds:
+    replicas: 4
+    selector:
+      matchLabels:
+        name: frontend
+    template:
+      metadata:
+        labels:
+          name: frontend
+      spec:
+        containers:
+        - name: frontend
+          image: hack4easy/ecds-frontend-amd64:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-frontend"]
+          ports:
+            - containerPort: 8084
+  loadbalancers:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: loadbalancer
+    template:
+      metadata:
+        labels:
+          name: loadbalancer
+      spec:
+        containers:
+        - name: loadbalancer
+          image: hack4easy/ecds-loadbalancer-amd64:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-loadbalancer"]
+          ports:
+            - containerPort: 8085
+  platforms:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: platform
+    template:
+      metadata:
+        labels:
+          name: platform
+      spec:
+        containers:
+        - name: platform
+          image: hack4easy/ecds-platform-amd64:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-platform"]
+          ports:
+            - containerPort: 8086
