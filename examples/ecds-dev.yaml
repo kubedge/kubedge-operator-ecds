@@ -24,6 +24,8 @@ spec:
           command: ["/ecds-businesslogic"]
           ports:
             - containerPort: 8082
+        nodeSelector:
+          ezZone: enabled
   enrichments:
     replicas: 1
     selector:
@@ -41,6 +43,8 @@ spec:
           command: ["/ecds-enrichment"]
           ports:
             - containerPort: 8083
+        nodeSelector:
+          ezZone: enabled
   frontEnds:
     replicas: 1
     selector:
@@ -58,6 +62,8 @@ spec:
           command: ["/ecds-frontend"]
           ports:
             - containerPort: 8084
+        nodeSelector:
+          ezZone: enabled
   loadbalancers:
     replicas: 1
     selector:
@@ -75,6 +81,8 @@ spec:
           command: ["/ecds-loadbalancer"]
           ports:
             - containerPort: 8085
+        nodeSelector:
+          czZone: enabled
   platforms:
     replicas: 1
     selector:
@@ -92,3 +100,5 @@ spec:
           command: ["/ecds-platform"]
           ports:
             - containerPort: 8086
+        nodeSelector:
+          czZone: enabled
