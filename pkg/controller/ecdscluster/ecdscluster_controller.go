@@ -53,7 +53,7 @@ func newECDSClusterReconciler(mgr manager.Manager) reconcile.Reconciler {
 		KubedgeBaseReconciler: bcontroller.KubedgeBaseReconciler{
 			Client:         mgr.GetClient(),
 			Scheme:         mgr.GetScheme(),
-			Recorder:       mgr.GetRecorder("ecdscluster-recorder"),
+			Recorder:       mgr.GetEventRecorderFor("ecdscluster-recorder"),
 			ManagerFactory: ecdsmgr.NewManagerFactory(mgr),
 			// reconcilePeriod: flags.ReconcilePeriod,
 		},
