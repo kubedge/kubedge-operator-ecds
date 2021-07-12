@@ -13,8 +13,8 @@
 # limitations under the License.
 
 apiVersion: v1
-description:  Kubedge Base Operator
-name: kubedge-base-operator
+description:  Kubedge ECDS Operator
+name: kubedge-ecds-operator
 version: 0.1.0
 sources: null
 maintainers:
