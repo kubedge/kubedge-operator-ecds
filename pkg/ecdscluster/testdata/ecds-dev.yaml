@@ -1,0 +1,104 @@
+apiVersion: kubedgeoperators.kubedge.cloud/v1alpha1
+kind: ECDSCluster
+metadata:
+  name: kubedge-ecds-cluster
+spec:
+  targetState: deployed
+  source:
+    type: local
+    location: /opt/kubedge-operators/ecds-templates/classic.yaml
+  businessLogics:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: businesslogic
+    template:
+      metadata:
+        labels:
+          name: businesslogic
+      spec:
+        containers:
+        - name: businesslogic
+          image: hack4easy/ecds-businesslogic-dev:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-businesslogic"]
+          ports:
+            - containerPort: 8082
+        nodeSelector:
+          ezZone: enabled
+  enrichments:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: enrichment
+    template:
+      metadata:
+        labels:
+          name: enrichment
+      spec:
+        containers:
+        - name: enrichment
+          image: hack4easy/ecds-enrichment-dev:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-enrichment"]
+          ports:
+            - containerPort: 8083
+        nodeSelector:
+          ezZone: enabled
+  frontEnds:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: frontend
+    template:
+      metadata:
+        labels:
+          name: frontend
+      spec:
+        containers:
+        - name: frontend
+          image: hack4easy/ecds-frontend-dev:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-frontend"]
+          ports:
+            - containerPort: 8084
+        nodeSelector:
+          ezZone: enabled
+  loadbalancers:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: loadbalancer
+    template:
+      metadata:
+        labels:
+          name: loadbalancer
+      spec:
+        containers:
+        - name: loadbalancer
+          image: hack4easy/ecds-loadbalancer-dev:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-loadbalancer"]
+          ports:
+            - containerPort: 8085
+        nodeSelector:
+          czZone: enabled
+  platforms:
+    replicas: 1
+    selector:
+      matchLabels:
+        name: platform
+    template:
+      metadata:
+        labels:
+          name: platform
+      spec:
+        containers:
+        - name: platform
+          image: hack4easy/ecds-platform-dev:v0.1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/ecds-platform"]
+          ports:
+            - containerPort: 8086
+        nodeSelector:
+          czZone: enabled
