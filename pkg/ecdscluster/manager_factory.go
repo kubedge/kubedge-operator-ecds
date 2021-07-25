@@ -75,11 +75,16 @@ func (f managerFactory) NewECDSClusterManager(r *av1.ECDSCluster) bmgr.KubedgeRe
 
 	return &ecdsclustermgr{
 		KubedgeBaseManager: bmgr.KubedgeBaseManager{
-			KubeClient:     f.kubeClient,
-			Renderer:       NewECDSClusterRenderer(ownerRefs, "ecds", renderFiles, renderValues, r.Spec),
-			Source:         r.Spec.Source,
-			PhaseName:      r.GetName(),
-			PhaseNamespace: r.GetNamespace()},
+			KubeClient:              f.kubeClient,
+			Renderer:                NewECDSClusterRenderer(ownerRefs, "ecds", renderFiles, renderValues, r.Spec),
+			OwnerRefs:               ownerRefs,
+			PhaseName:               r.GetName(),
+			PhaseNamespace:          r.GetNamespace(),
+			Source:                  r.Spec.Source,
+			IsInstalledFlag:         false,
+			IsUpdateRequiredFlag:    false,
+			DeployedSubResourceList: nil,
+		},
 
 		spec:   r.Spec,
 		status: &r.Status,
