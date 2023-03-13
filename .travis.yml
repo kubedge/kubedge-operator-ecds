@@ -3,7 +3,7 @@ sudo: true
 language: go
 
 go:
-  - "1.17.x"
+  - "1.20.x"
 
 services:
   - docker
@@ -23,9 +23,9 @@ jobs:
   include:
     - stage: build docker image
       script:
-      - export DHEALTHREPO=$DOCKER_NAMESPACE/kubedge-ecds-operator-dev
+      - export DHEALTHREPO=$DOCKER_NAMESPACE/kubedge-mme-operator-dev
       - export VERSION=v0.1.0
-      - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
+      - GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/kubedge-mme-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker build -t $DHEALTHREPO:$VERSION -f build/Dockerfile .
       - docker tag $DHEALTHREPO:$VERSION $DHEALTHREPO:latest
@@ -33,7 +33,7 @@ jobs:
       - docker push $DHEALTHREPO -a
     - stage: test docker image
       script:
-      - export DHEALTHREPO=$DOCKER_NAMESPACE/kubedge-ecds-operator-dev
+      - export DHEALTHREPO=$DOCKER_NAMESPACE/kubedge-mme-operator-dev
       - export VERSION=v0.1.0
-      - docker run -d --name test_ecds $DHEALTHREPO:$VERSION
-      - docker ps | grep -q test_ecds
+      - docker run -d --name test_mme $DHEALTHREPO:$VERSION
+      - docker ps | grep -q test_mme
