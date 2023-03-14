@@ -7,9 +7,6 @@ metadata:
   labels:
     app: businesslogic
 spec:
-  ports:
-  - port: 80
-    name: businesslogic
   clusterIP: None
   selector:
     app: businesslogic
@@ -37,9 +34,6 @@ spec:
         command:
         - sleep
         - "3600"
-        ports:
-        - containerPort: 80
-          name: businesslogic
 ---
 apiVersion: v1
 kind: Service
@@ -49,9 +43,6 @@ metadata:
   labels:
     app: enrichment
 spec:
-  ports:
-  - port: 80
-    name: enrichment
   clusterIP: None
   selector:
     app: enrichment
@@ -79,9 +70,6 @@ spec:
         command:
         - sleep
         - "3600"
-        ports:
-        - containerPort: 80
-          name: enrichment
 ---
 apiVersion: v1
 kind: Service
@@ -91,9 +79,6 @@ metadata:
   labels:
     app: frontend
 spec:
-  ports:
-  - port: 80
-    name: frontend
   clusterIP: None
   selector:
     app: frontend
@@ -121,9 +106,6 @@ spec:
         command:
         - sleep
         - "3600"
-        ports:
-        - containerPort: 80
-          name: frontend
 ---
 apiVersion: v1
 kind: Service
@@ -133,9 +115,6 @@ metadata:
   labels:
     app: loadbalancer
 spec:
-  ports:
-  - port: 80
-    name: loadbalancer
   clusterIP: None
   selector:
     app: loadbalancer
@@ -163,9 +142,6 @@ spec:
         command:
         - sleep
         - "3600"
-        ports:
-        - containerPort: 80
-          name: loadbalancer
 ---
 apiVersion: v1
 kind: Service
@@ -175,9 +151,6 @@ metadata:
   labels:
     app: platform
 spec:
-  ports:
-  - port: 80
-    name: platform
   clusterIP: None
   selector:
     app: platform
@@ -205,6 +178,3 @@ spec:
         command:
         - sleep
         - "3600"
-        ports:
-        - containerPort: 80
-          name: platform
