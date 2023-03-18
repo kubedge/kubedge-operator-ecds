@@ -25,7 +25,7 @@ TEST SUITE: None
 ```
 
 ```bash
-kubedge@kubedgesdk:~/proj/branchalignments/kubedge/kubedge-operator-ecds$ kubectl get all -A
+$ kubectl get all -A
 ```
 
 ```
