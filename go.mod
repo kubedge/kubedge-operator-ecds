@@ -3,10 +3,10 @@ module github.com/kubedge/kubedge-operator-ecds
 go 1.20
 
 require (
-	github.com/kubedge/kubedge-operator-base v0.1.24-kubedge.20230312
-	k8s.io/api v0.26.1
-	k8s.io/apimachinery v0.26.1
-	k8s.io/client-go v0.26.1
+	github.com/kubedge/kubedge-operator-base v0.1.25-kubedge.20230318
+	k8s.io/api v0.26.3
+	k8s.io/apimachinery v0.26.3
+	k8s.io/client-go v0.26.3
 	sigs.k8s.io/controller-runtime v0.14.5
 	sigs.k8s.io/yaml v1.3.0
 )
