@@ -1,18 +1,19 @@
-FROM alpine:3.20
+# Copyright 2018 Kubedge.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-ENV OPERATOR=/usr/local/bin/kubedge-ecds-operator \
-    USER_UID=1001 \
-    USER_NAME=kubedge-ecds-operator
-
-# install operator binary
-COPY build/_output/bin/kubedge-ecds-operator ${OPERATOR}
-
-COPY build/bin /usr/local/bin
-
-RUN  /usr/local/bin/user_setup
-
-COPY build/ecds-templates /opt/kubedge-operators/ecds-templates
-
-ENTRYPOINT ["/usr/local/bin/entrypoint"]
-
-USER ${USER_UID}
+FROM scratch
+ADD build/etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+ADD build/_output/arm64v8/kubedge-ecds-operator /usr/local/bin/kubedge-ecds-operator
+ADD build/ecds-templates /opt/kubedge-operators/ecds-templates
+CMD ["/usr/local/bin/kubedge-ecds-operator"]
