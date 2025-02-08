@@ -12,7 +12,7 @@ IMG_DEV          ?= ${DHUBREPO_DEV}:v${VERSION_V1}
 IMG_AMD64        ?= ${DHUBREPO_AMD64}:v${VERSION_V1}
 IMG_ARM32V7      ?= ${DHUBREPO_ARM32V7}:v${VERSION_V1}
 IMG_ARM64V8      ?= ${DHUBREPO_ARM64V8}:v${VERSION_V1}
-IMG				 ?= ${DHUBREPO}:v${VERSION_V1}
+IMG              ?= ${DHUBREPO}:v${VERSION_V1}
 K8S_NAMESPACE    ?= default
 
 # CONTAINER_TOOL defines the container tool to be used for building images.
@@ -69,22 +69,22 @@ docker-build: fmt vet-v1 docker-build-dev docker-build-amd64 docker-build-arm32v
 
 docker-build-dev:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform linux/amd64 -f build/Dockerfile.dev -t ${IMG_DEV} .
+	docker buildx build --platform=linux/amd64 -f build/Dockerfile.dev -t ${IMG_DEV} .
 	docker tag ${IMG_DEV} ${DHUBREPO_DEV}:latest
 
 docker-build-amd64:
 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/amd64/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform linux/amd64 -f build/Dockerfile -t ${IMG_AMD64} .
+	docker buildx build --platform=linux/amd64 -f build/Dockerfile.amd64 -t ${IMG_AMD64} .
 	docker tag ${IMG_AMD64} ${DHUBREPO_AMD64}:latest
 
 docker-build-arm32v7:
 	GOOS=linux GOARM=7 GOARCH=arm CGO_ENABLED=0 go build -o build/_output/arm32v7/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform linux/arm/v7 -f build/Dockerfile -t ${IMG_ARM32V7} .
+	docker buildx build --platform=linux/arm/v7 -f build/Dockerfile.arm32v7 -t ${IMG_ARM32V7} .
 	docker tag ${IMG_ARM32V7} ${DHUBREPO_ARM32V7}:latest
 
 docker-build-arm64v8:
 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o build/_output/arm64v8/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform linux/arm64 -f build/Dockerfile -t ${IMG_ARM64V8} .
+	docker buildx build --platform=linux/arm64 -f build/Dockerfile.arm64v8 -t ${IMG_ARM64V8} .
 	docker tag ${IMG_ARM64V8} ${DHUBREPO_ARM64V8}:latest
 
 PLATFORMS ?= linux/arm64,linux/amd64,linux/arm/v7
