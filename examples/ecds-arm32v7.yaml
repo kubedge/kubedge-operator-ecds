@@ -19,7 +19,7 @@ spec:
       spec:
         containers:
         - name: businesslogic
-          image: hack4easy/ecds-businesslogic-arm32v7:v0.1.0
+          image: hack4easy/ecds-businesslogic-arm32v7:v0.2.24
           imagePullPolicy: IfNotPresent
           command: ["/ecds-businesslogic"]
           ports:
@@ -38,7 +38,7 @@ spec:
       spec:
         containers:
         - name: enrichment
-          image: hack4easy/ecds-enrichment-arm32v7:v0.1.0
+          image: hack4easy/ecds-enrichment-arm32v7:v0.2.24
           imagePullPolicy: IfNotPresent
           command: ["/ecds-enrichment"]
           ports:
@@ -57,7 +57,7 @@ spec:
       spec:
         containers:
         - name: frontend
-          image: hack4easy/ecds-frontend-arm32v7:v0.1.0
+          image: hack4easy/ecds-frontend-arm32v7:v0.2.24
           imagePullPolicy: IfNotPresent
           command: ["/ecds-frontend"]
           ports:
@@ -76,7 +76,7 @@ spec:
       spec:
         containers:
         - name: loadbalancer
-          image: hack4easy/ecds-loadbalancer-arm32v7:v0.1.0
+          image: hack4easy/ecds-loadbalancer-arm32v7:v0.2.24
           imagePullPolicy: IfNotPresent
           command: ["/ecds-loadbalancer"]
           ports:
@@ -95,7 +95,7 @@ spec:
       spec:
         containers:
         - name: platform
-          image: hack4easy/ecds-platform-arm32v7:v0.1.0
+          image: hack4easy/ecds-platform-arm32v7:v0.2.24
           imagePullPolicy: IfNotPresent
           command: ["/ecds-platform"]
           ports:
