@@ -17,10 +17,10 @@ spec:
       containers:
         - name: kubedge-ecds-operator
           # Replace this with the built image name
-          image: {{ .Values.images.tags.operator }}
+          image: kubedge1/kubedge-ecds-operator:v0.2.0
           command:
           - /usr/local/bin/kubedge-ecds-operator
-          imagePullPolicy: {{ .Values.images.pull_policy }}
+          imagePullPolicy: "IfNotPresent"
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
