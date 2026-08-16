@@ -46,7 +46,6 @@ clean:
 unittest: setup fmt vet-v1
 	echo "sudo systemctl stop kubelet"
 	echo -e 'docker stop $$(docker ps -qa)'
-	echo -e 'export PATH=$${PATH}:/usr/local/kubebuilder/bin'
 	mkdir -p config/crds
 	cp chart/templates/*v1alpha1* config/crds/
 	go test ./pkg/... ./cmd/... -coverprofile cover.out
@@ -60,9 +59,23 @@ vet-v1: fmt
 	go vet -composites=false -tags=v1 ./pkg/... ./cmd/...
 
 # Generate code
-generate: setup
-	GO111MODULE=on controller-gen crd paths=./pkg/apis/kubedgeoperators/... crd:trivialVersions=true output:crd:dir=./chart/templates/ output:none
-	GO111MODULE=on controller-gen object paths=./pkg/apis/kubedgeoperators/... output:object:dir=./pkg/apis/kubedgeoperators/v1alpha1 output:none
+#
+# ECDSCluster's Go type is defined in kubedge-operator-base, not here — this repo is
+# a consumer of that shared API. So the CRD is regenerated from the *pinned* base
+# module (it tracks whatever version go.mod resolves) rather than a local pkg/apis,
+# and there is no deepcopy (controller-gen object) step: base owns the DeepCopy code.
+# controller-gen is provided by `go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.21.0`.
+CONTROLLER_GEN ?= controller-gen
+BASE_APIS := $(shell go list -m -f '{{.Dir}}' github.com/kubedge/kubedge-operator-base)/pkg/apis/kubedgeoperators/...
+
+generate: generate-manifests
+
+generate-manifests:
+	mkdir -p chart/templates/
+	rm -rf build/_crds && mkdir -p build/_crds
+	GO111MODULE=on $(CONTROLLER_GEN) crd:generateEmbeddedObjectMeta=true paths=$(BASE_APIS) output:crd:dir=./build/_crds output:none
+	cp build/_crds/kubedgeoperators.kubedge.cloud_ecdsclusters.yaml chart/templates/
+	rm -rf build/_crds
 
 # Build the docker image
 docker-build: fmt vet-v1 docker-build-dev docker-build-amd64 docker-build-arm32v7 docker-build-arm64v8
