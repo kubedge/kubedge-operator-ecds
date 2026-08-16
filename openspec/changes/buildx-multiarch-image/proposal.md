@@ -1,25 +1,31 @@
-# Build a single multi-arch image with buildx
+# Build a single multi-arch image with buildx (proven on operator-base)
 
 ## Why
 
-The current `build/Dockerfile` is single-arch `linux/amd64` (alpine), driven by
-`docker-build-v1`. But the real targets are arm64 (Raspberry Pi armv8 + Apple-Silicon
-dev), and the legacy scheme baked the arch into the image name, which historically forced
-per-arch Helm chart branches. `docker buildx` produces one multi-arch image under a
-single name:tag and the runtime resolves the arch — collapsing all of that.
+ecds's Makefile builds four arch-suffixed images (`kubedge1/kubedge-ecds-operator-{dev,amd64,arm32v7,arm64v8}`)
+by pre-compiling a binary per arch then copying it in — the same legacy shape
+`kubedge-operator-base` had. Base already converted this to one multi-arch image via
+`docker buildx` + a multi-stage Dockerfile (verified: `make -n` expands correctly, Go stays
+green). **Copy base's pattern verbatim, adapted to ecds's names.**
 
-## What changes
+## What Changes (copy base's Makefile + Dockerfile pattern)
 
-- Replace the single-arch `docker-build-v1`/`docker-push-v1` flow with a `docker buildx
-  build --platform linux/arm64[,linux/amd64] -t <image>:<tag> --push` target.
-- Drop arch suffixes from the image name.
-- On Apple-Silicon, arm64 is native; amd64 (if kept) builds via emulation (colima/qemu).
+- `VERSION_V1` → `VERSION`; keep `IMG ?= ${DHUBREPO}:v${VERSION}` (DHUBREPO = `kubedge1/kubedge-ecds-operator`).
+- Add `PLATFORMS ?= linux/arm64,linux/amd64` (arm64 primary — Apple-Silicon + Pi armv8).
+- Replace `docker-build-{dev,amd64,arm32v7,arm64v8}` with:
+  - `docker-buildx: vet-v1` → `docker buildx build --platform ${PLATFORMS} -f build/Dockerfile -t ${IMG} -t ${DHUBREPO}:latest --push .`
+  - `docker-build: vet-v1` → `docker buildx build --load -f build/Dockerfile -t ${IMG} .` (single-arch dev, `--load`)
+  - `docker-push: docker-buildx` (alias)
+- Delete the `DHUBREPO_{DEV,AMD64,ARM32V7,ARM64V8}` + `IMG_*` variants.
+- Rewrite `build/Dockerfile` **multi-stage** (see tasks) so the binary compiles per
+  `TARGETOS/TARGETARCH` — the old Dockerfile copying a prebuilt amd64 binary is **broken for arm64**.
+- `install`/`purge` → Helm **v3** (`helm install/uninstall`), depending on `docker-buildx`.
 
 ## Non-goals
 
-- The Helm chart consolidation (kill per-arch branches) — that lives in the helm/util
-  repos as its own change; this one only makes the image multi-arch.
+- The paired sim (`kubedge-sim-ecds`) image build — that's its own repo's change.
 
-## Impact
+## Capabilities
 
-Fleet-wide (all operators + sims). Prerequisite for the chart consolidation.
+### New Capabilities
+- container-packaging: how the ecds operator image is built (single multi-arch).
