@@ -143,7 +143,20 @@ docker-push: docker-buildx
 # docker-push-arm64v8:
 # 	docker push ${IMG_ARM64V8}
 
+# Local container run-smoke gate: build -> load into kind -> deploy -> apply a sample CR
+# -> assert the ECDSCluster reconciles and every component is Ready -> tear down.
+# See bin/smoke.sh for the cluster decision (kind on colima) and sub-commands.
+.PHONY: smoke smoke-up smoke-down
+smoke:
+	./bin/smoke.sh cycle
+smoke-up:
+	./bin/smoke.sh up
+smoke-down:
+	./bin/smoke.sh down
+
 # Run against the configured Kubernetes cluster in ~/.kube/config (Helm v3).
+# NOTE: this rebuilds+pushes the multi-arch image (docker-buildx --push) and needs
+# registry creds. For a local/offline run use `make smoke` (kind + --load), not this.
 .PHONY: install
 install: docker-buildx
 	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG} --namespace ${K8S_NAMESPACE}
