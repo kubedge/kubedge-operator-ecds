@@ -1,20 +1,44 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Role: CONSUMER in the kubedge OPERATOR family. Reconciles the ECDSCluster CRD and imports
+  the shared code from kubedge-operator-base. This is the FIRST consumer to bring fully
+  working end-to-end — kubedge-operator-base is already done and PROVEN, so copy its
+  resolutions instead of re-deriving them.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Dependency (by convention — OpenSpec has no cross-repo link):
+    - Compile-time: consumes github.com/kubedge/kubedge-operator-base capabilities
+      shared-crd-kinds (ECDSCluster type + common model), kubedgemanager-engine, base-reconciler.
+    - Runtime/deploy: the ECDSCluster CR deploys the paired sim kubedge-sim-ecds's five
+      component images (hack4easy/ecds-{platform,frontend,enrichment,businesslogic,loadbalancer}).
+    - CURRENT pin: v0.1.29-kubedge.20240602 (stale). REALIGN target: v0.1.36-kubedge.20260815
+      (k8s v0.36.3, controller-runtime v0.24.1, go 1.26). NOTE: base's main has further work
+      (modernize-k8s-apis/buildx/tests) applied but NOT yet re-tagged — v0.1.36 is the clean
+      released tag; realign to it now, and re-realign if base cuts a newer tag.
+
+  What base already solved (COPY these, adapted to ecds names):
+    - realign breakages: controller-runtime generic Watch API →
+      `c.Watch(source.Kind(cache, obj, handler, preds...))` (pin `client.Object(&u)` where the
+      handler/predicate is client.Object-typed); `go vet` non-constant printf → `Fn(..., "%s", msg)`.
+    - standardize-codegen: `go install sigs.k8s.io/controller-tools/cmd/controller-gen@v0.21.0`;
+      drop the REMOVED `crd:trivialVersions=true`; drop the `/usr/local/kubebuilder/bin` PATH assumption.
+    - buildx-multiarch-image: base's exact Makefile+multi-stage-Dockerfile recipe is in that
+      change's tasks.md — one image via `docker buildx`, arm64 primary, Helm v3 install/purge,
+      retire the -v1/arch-suffixed targets. Needs `colima start` on Apple-Silicon.
+
+  FASTEST PATH TO A WORKING OPERATOR (compile → image → run):
+    1. realign-to-base   → `go build/vet/test ./...` green (apply base's Watch/printf fixes).
+    2. standardize-codegen → `make generate` regenerates CRDs (controller-gen v0.21, no trivialVersions).
+    3. buildx-multiarch-image → `colima start` then `make docker-buildx` → one arm64 image.
+    4. deploy → `make install` (Helm v3) into the local cluster; apply examples/ecds.yaml;
+       confirm the operator pod starts and the ECDSCluster reconciles (deploys the sim pods).
+    5. then: adopt-go-ci, container-run-smoke (formalize the gate), test-coverage-uplift.
+
+  Tech: Kubernetes operator, Go, legacy operator-sdk-v0 layout; COMPONENT=kubedge-ecds-operator,
+  DHUBREPO=kubedge1/kubedge-ecds-operator, entrypoint ./cmd/... (cmd/manager), chart at chart/.
+  The Makefile IS the CI; verify with raw `go build/vet/test ./...` (NOT `make test`).
+
+rules:
+  spec:
+    - Describe CURRENT behavior; do not spec aspirational features.
+    - Reference the consumed base capability + tag, and the paired sim, when behavior depends on them.
