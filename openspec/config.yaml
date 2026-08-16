@@ -1,20 +1,32 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# Project context — shown to AI when creating artifacts.
+context: |
+  Role: CONSUMER in the kubedge OPERATOR family. This operator reconciles the
+  ECDSCluster CRD and imports the shared code from kubedge-operator-base.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Dependency (by convention — OpenSpec has no cross-repo link):
+    - consumes github.com/kubedge/kubedge-operator-base, capabilities:
+      shared-crd-kinds (ECDSCluster type + common model), kubedgemanager-engine
+      (render/manager factory), base-reconciler (KubedgeBaseReconciler + conditions).
+    - CURRENT pin: v0.1.29-kubedge.20240602 (stale). REALIGN target:
+      v0.1.36-kubedge.20260815 (k8s v0.36.3, controller-runtime v0.24.1, go 1.26).
+
+  Tech / build:
+    - Kubernetes operator, Go. Legacy operator-sdk-v0 layout (pkg/apis, pkg/controller,
+      cmd/manager); PROJECT version "1".
+    - The Makefile IS the CI: verify with raw `go build/vet/test ./...` (NOT `make test`).
+      `make generate` runs controller-gen; NOTE landmines (Note 8): it uses the REMOVED
+      `crd:trivialVersions=true` flag and assumes controller-gen/kubebuilder at
+      /usr/local/kubebuilder/bin — both must be fixed (see change: standardize-codegen).
+    - Images: arm64 (Pi armv8 + Apple-Silicon) via buildx multi-arch; deploy to a cluster;
+      run gate = build -> load -> deploy -> confirm start -> undeploy.
+
+  Bring-up order: realign-to-base FIRST (drags k8s/controller-runtime up via the base),
+  then adopt-go-ci, standardize-codegen, buildx-multiarch-image, container-run-smoke,
+  test-coverage-uplift.
+
+rules:
+  spec:
+    - Describe CURRENT behavior; do not spec aspirational features.
+    - Reference the consumed base capability + tag when behavior depends on it.
