@@ -54,7 +54,7 @@ func newECDSClusterReconciler(mgr manager.Manager) reconcile.Reconciler {
 		KubedgeBaseReconciler: bcontroller.KubedgeBaseReconciler{
 			Client:         mgr.GetClient(),
 			Scheme:         mgr.GetScheme(),
-			Recorder:       mgr.GetEventRecorderFor("ecdscluster-recorder"),
+			Recorder:       mgr.GetEventRecorderFor("ecdscluster-recorder"), //nolint:staticcheck // SA1019: deprecated but functional; migration tracked separately
 			ManagerFactory: ecdsmgr.NewManagerFactory(mgr),
 			// reconcilePeriod: flags.ReconcilePeriod,
 		},
