@@ -1,17 +1,23 @@
 # Tasks — buildx-multiarch-image (recipe proven on operator-base)
 
-- [ ] Ensure a live builder: `docker buildx ls`; on Apple-Silicon **`colima start`** first (base hit "no builder live" here — buildx CLI present but daemon down).
+> Policy: the legacy per-arch `docker-build` machinery is painful and retired. **Comment it
+> out (preserve, don't delete)** so it stays discoverable and can't silently return.
+> `docker buildx` is the sole go-forward path.
+
+- [ ] Ensure a live builder: `docker buildx ls`; on Apple-Silicon **`colima start`** first (base hit "no builder live").
 - [ ] Makefile: `VERSION_V1`→`VERSION`; add `PLATFORMS ?= linux/arm64,linux/amd64`; keep `IMG ?= ${DHUBREPO}:v${VERSION}`.
-- [ ] Makefile: replace the four `docker-build-{dev,amd64,arm32v7,arm64v8}` targets with:
+- [ ] Makefile: add the buildx targets:
       ```
       docker-buildx: vet-v1
       	docker buildx build --platform ${PLATFORMS} -f build/Dockerfile -t ${IMG} -t ${DHUBREPO}:latest --push .
-      docker-build: vet-v1
+      docker-build: vet-v1        # single-arch --load, for local dev iteration only
       	docker buildx build --load -f build/Dockerfile -t ${IMG} .
       docker-push: docker-buildx
       ```
-- [ ] Delete `DHUBREPO_{DEV,AMD64,ARM32V7,ARM64V8}` and `IMG_{DEV,AMD64,ARM32V7,ARM64V8}`.
-- [ ] Rewrite `build/Dockerfile` multi-stage (copy base's, rename binary to `kubedge-ecds-operator`, entrypoint `./cmd/...` = cmd/manager):
+- [ ] **Comment out (retire, don't delete)** the legacy `docker-build-{dev,amd64,arm32v7,arm64v8}`
+      targets and the `DHUBREPO_{DEV,AMD64,ARM32V7,ARM64V8}` / `IMG_{DEV,AMD64,ARM32V7,ARM64V8}`
+      vars — with a `# RETIRED: superseded by docker-buildx (multi-arch)` header.
+- [ ] Add the single multi-stage `build/Dockerfile` (base's recipe; binary `kubedge-ecds-operator`, entrypoint `./cmd/...`):
       ```
       # syntax=docker/dockerfile:1
       FROM --platform=$BUILDPLATFORM golang:1.26-alpine AS builder
@@ -25,6 +31,8 @@
           go build -trimpath -tags=v1 -o /out/kubedge-ecds-operator ./cmd/...
       # runtime stage: FROM alpine (or distroless), COPY --from=builder /out/kubedge-ecds-operator ...
       ```
+- [ ] **Comment out / retire the per-arch `build/Dockerfile.{dev,amd64,arm32v7,arm64v8}`** (leave a one-line `# RETIRED` note or move to a `legacy/` dir); the multi-stage `build/Dockerfile` is the only live one.
+- [ ] **Comment out the per-arch image entries in the Helm `chart/`** (values + any templated arch-specific image refs); the chart references only `${IMG}` / `images.tags.operator`.
 - [ ] `install`/`purge` → Helm v3: `install: docker-buildx` → `helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG}`; `purge:` → `helm uninstall kubedge-ecds-operator`.
-- [ ] Verify: `make -n docker-buildx docker-build` expands, no residual `-v1` image refs, Go build/vet/test stay green (Makefile/Dockerfile don't touch Go).
+- [ ] Verify: `make -n docker-buildx docker-build` expands with **no live `-dev/-amd64/-arm32v7/-arm64v8` refs**; a chart render references only the single image; Go build/vet/test stay green.
 - [ ] With colima up: `make docker-buildx` then `docker buildx imagetools inspect ${IMG}` → manifest list incl. linux/arm64.
