@@ -1,19 +1,29 @@
 
 # Image URL to use all building/pushing image targets
 COMPONENT        ?= kubedge-ecds-operator
-VERSION_V1       ?= 0.2.0
+VERSION          ?= 0.2.0
 DHUBREPO         ?= kubedge1/${COMPONENT}
-DHUBREPO_DEV     ?= kubedge1/${COMPONENT}-dev
-DHUBREPO_AMD64   ?= kubedge1/${COMPONENT}-amd64
-DHUBREPO_ARM32V7 ?= kubedge1/${COMPONENT}-arm32v7
-DHUBREPO_ARM64V8 ?= kubedge1/${COMPONENT}-arm64v8
 DOCKER_NAMESPACE ?= kubedge1
-IMG_DEV          ?= ${DHUBREPO_DEV}:v${VERSION_V1}
-IMG_AMD64        ?= ${DHUBREPO_AMD64}:v${VERSION_V1}
-IMG_ARM32V7      ?= ${DHUBREPO_ARM32V7}:v${VERSION_V1}
-IMG_ARM64V8      ?= ${DHUBREPO_ARM64V8}:v${VERSION_V1}
-IMG              ?= ${DHUBREPO}:v${VERSION_V1}
+IMG              ?= ${DHUBREPO}:v${VERSION}
 K8S_NAMESPACE    ?= default
+
+# Target platforms for the single multi-arch image. arm64 primary (Apple-Silicon +
+# Raspberry Pi armv8); amd64 kept for x86 clusters. Override:
+#   make docker-buildx PLATFORMS=linux/arm64
+PLATFORMS        ?= linux/arm64,linux/amd64
+
+# RETIRED: superseded by docker-buildx (multi-arch). The per-arch image variants below
+# built four separate arch-suffixed images by copying a prebuilt binary into each — the
+# arm images were actually amd64 binaries. Preserved (commented) for discoverability.
+# VERSION_V1       ?= 0.2.0
+# DHUBREPO_DEV     ?= kubedge1/${COMPONENT}-dev
+# DHUBREPO_AMD64   ?= kubedge1/${COMPONENT}-amd64
+# DHUBREPO_ARM32V7 ?= kubedge1/${COMPONENT}-arm32v7
+# DHUBREPO_ARM64V8 ?= kubedge1/${COMPONENT}-arm64v8
+# IMG_DEV          ?= ${DHUBREPO_DEV}:v${VERSION_V1}
+# IMG_AMD64        ?= ${DHUBREPO_AMD64}:v${VERSION_V1}
+# IMG_ARM32V7      ?= ${DHUBREPO_ARM32V7}:v${VERSION_V1}
+# IMG_ARM64V8      ?= ${DHUBREPO_ARM64V8}:v${VERSION_V1}
 
 # CONTAINER_TOOL defines the container tool to be used for building images.
 # Be aware that the target commands are only tested with Docker which is
@@ -77,73 +87,76 @@ generate-manifests:
 	cp build/_crds/kubedgeoperators.kubedge.cloud_ecdsclusters.yaml chart/templates/
 	rm -rf build/_crds
 
-# Build the docker image
-docker-build: fmt vet-v1 docker-build-dev docker-build-amd64 docker-build-arm32v7 docker-build-arm64v8
-
-docker-build-dev:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform=linux/amd64 -f build/Dockerfile.dev -t ${IMG_DEV} .
-	docker tag ${IMG_DEV} ${DHUBREPO_DEV}:latest
-
-docker-build-amd64:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/amd64/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform=linux/amd64 -f build/Dockerfile.amd64 -t ${IMG_AMD64} .
-	docker tag ${IMG_AMD64} ${DHUBREPO_AMD64}:latest
-
-docker-build-arm32v7:
-	GOOS=linux GOARM=7 GOARCH=arm CGO_ENABLED=0 go build -o build/_output/arm32v7/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform=linux/arm/v7 -f build/Dockerfile.arm32v7 -t ${IMG_ARM32V7} .
-	docker tag ${IMG_ARM32V7} ${DHUBREPO_ARM32V7}:latest
-
-docker-build-arm64v8:
-	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o build/_output/arm64v8/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
-	docker buildx build --platform=linux/arm64 -f build/Dockerfile.arm64v8 -t ${IMG_ARM64V8} .
-	docker tag ${IMG_ARM64V8} ${DHUBREPO_ARM64V8}:latest
-
-PLATFORMS ?= linux/arm64,linux/amd64,linux/arm/v7
+# Build and push a single multi-arch image (manifest list). The binary is compiled per
+# TARGETOS/TARGETARCH inside build/Dockerfile, so one command covers every platform.
+# Needs a live buildx builder — on Apple-Silicon run `colima start` first.
 .PHONY: docker-buildx
-docker-buildx: ## Build and push docker image for the manager for cross-platform support
-	# copy existing Dockerfile and insert --platform=${BUILDPLATFORM} into Dockerfile.cross, and preserve the original Dockerfile
-	sed -e '1 s/\(^FROM\)/FROM --platform=\$$\{BUILDPLATFORM\}/; t' -e ' 1,// s//FROM --platform=\$$\{BUILDPLATFORM\}/' build/Dockerfile.buildkit > Dockerfile.cross
-	- $(CONTAINER_TOOL) buildx create --name project-v3-builder
-	$(CONTAINER_TOOL) buildx use project-v3-builder
-	- $(CONTAINER_TOOL) buildx build --push --platform=$(PLATFORMS) --tag ${IMG} -f Dockerfile.cross .
-	- $(CONTAINER_TOOL) buildx rm project-v3-builder
-	rm Dockerfile.cross
+docker-buildx: vet-v1
+	docker buildx build --platform ${PLATFORMS} -f build/Dockerfile -t ${IMG} -t ${DHUBREPO}:latest --push .
 
+# Local single-arch image for dev (loads into the local docker; no push).
+.PHONY: docker-build
+docker-build: vet-v1
+	docker buildx build --load -f build/Dockerfile -t ${IMG} .
 
-# Push the docker image
-docker-push: docker-push-dev docker-push-amd64 docker-push-arm32v7 docker-push-arm64v8
+# Push is folded into docker-buildx (--push); kept as an alias for muscle memory.
+.PHONY: docker-push
+docker-push: docker-buildx
 
-docker-push-dev:
-	docker push ${IMG_DEV}
+# RETIRED: superseded by docker-buildx (multi-arch). The legacy per-arch build/push
+# machinery pre-compiled a binary per arch and copied it into an arch-specific Dockerfile
+# (build/Dockerfile.{dev,amd64,arm32v7,arm64v8}, now under build/legacy/). Preserved
+# (commented) for discoverability; do not resurrect — docker-buildx is the sole path.
+# docker-build: fmt vet-v1 docker-build-dev docker-build-amd64 docker-build-arm32v7 docker-build-arm64v8
+#
+# docker-build-dev:
+# 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/bin/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
+# 	docker buildx build --platform=linux/amd64 -f build/Dockerfile.dev -t ${IMG_DEV} .
+# 	docker tag ${IMG_DEV} ${DHUBREPO_DEV}:latest
+#
+# docker-build-amd64:
+# 	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o build/_output/amd64/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
+# 	docker buildx build --platform=linux/amd64 -f build/Dockerfile.amd64 -t ${IMG_AMD64} .
+# 	docker tag ${IMG_AMD64} ${DHUBREPO_AMD64}:latest
+#
+# docker-build-arm32v7:
+# 	GOOS=linux GOARM=7 GOARCH=arm CGO_ENABLED=0 go build -o build/_output/arm32v7/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
+# 	docker buildx build --platform=linux/arm/v7 -f build/Dockerfile.arm32v7 -t ${IMG_ARM32V7} .
+# 	docker tag ${IMG_ARM32V7} ${DHUBREPO_ARM32V7}:latest
+#
+# docker-build-arm64v8:
+# 	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o build/_output/arm64v8/kubedge-ecds-operator -gcflags all=-trimpath=${GOPATH} -asmflags all=-trimpath=${GOPATH} -tags=v1 ./cmd/...
+# 	docker buildx build --platform=linux/arm64 -f build/Dockerfile.arm64v8 -t ${IMG_ARM64V8} .
+# 	docker tag ${IMG_ARM64V8} ${DHUBREPO_ARM64V8}:latest
+#
+# docker-push: docker-push-dev docker-push-amd64 docker-push-arm32v7 docker-push-arm64v8
+# docker-push-dev:
+# 	docker push ${IMG_DEV}
+# docker-push-amd64:
+# 	docker push ${IMG_AMD64}
+# docker-push-arm32v7:
+# 	docker push ${IMG_ARM32V7}
+# docker-push-arm64v8:
+# 	docker push ${IMG_ARM64V8}
 
-docker-push-amd64:
-	docker push ${IMG_AMD64}
+# Run against the configured Kubernetes cluster in ~/.kube/config (Helm v3).
+.PHONY: install
+install: docker-buildx
+	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG} --namespace ${K8S_NAMESPACE}
 
-docker-push-arm32v7:
-	docker push ${IMG_ARM32V7}
+.PHONY: purge
+purge:
+	helm uninstall kubedge-ecds-operator --namespace ${K8S_NAMESPACE}
 
-docker-push-arm64v8:
-	docker push ${IMG_ARM64V8}
-
-# Run against the configured Kubernetes cluster in ~/.kube/config
-install: install-dev
-
-install-dev: docker-build-dev
-	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_DEV} --namespace ${K8S_NAMESPACE}
-
-install-amd64:
-	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_AMD64},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
-
-install-arm32v7:
-	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM32V7},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
-
-install-arm64v8:
-	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM64V8},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
-
-install-gen:
-	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
-
-purge: setup
-	helm delete kubedge-ecds-operator
+# RETIRED: superseded by the single `install` above (Helm v3, one multi-arch image).
+# install: install-dev
+# install-dev: docker-build-dev
+# 	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_DEV} --namespace ${K8S_NAMESPACE}
+# install-amd64:
+# 	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_AMD64},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
+# install-arm32v7:
+# 	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM32V7},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
+# install-arm64v8:
+# 	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG_ARM64V8},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
+# install-gen:
+# 	helm install kubedge-ecds-operator chart --set images.tags.operator=${IMG},images.pull_policy=Always --namespace ${K8S_NAMESPACE}
