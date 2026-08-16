@@ -81,10 +81,14 @@ BASE_APIS := $(shell go list -m -f '{{.Dir}}' github.com/kubedge/kubedge-operato
 generate: generate-manifests
 
 generate-manifests:
-	mkdir -p chart/templates/
+	# CRDs go in chart/crds/ (not chart/templates/): Helm installs crds/ via the API
+	# and does NOT store them in the release Secret. The ecdsclusters CRD embeds five
+	# full PodTemplateSpec schemas (~3.2MB) and would blow Helm's 1MB release-Secret
+	# limit if templated; crds/ sidesteps that.
+	mkdir -p chart/crds/
 	rm -rf build/_crds && mkdir -p build/_crds
 	GO111MODULE=on $(CONTROLLER_GEN) crd:generateEmbeddedObjectMeta=true paths=$(BASE_APIS) output:crd:dir=./build/_crds output:none
-	cp build/_crds/kubedgeoperators.kubedge.cloud_ecdsclusters.yaml chart/templates/
+	cp build/_crds/kubedgeoperators.kubedge.cloud_ecdsclusters.yaml chart/crds/
 	rm -rf build/_crds
 
 # Build and push a single multi-arch image (manifest list). The binary is compiled per
