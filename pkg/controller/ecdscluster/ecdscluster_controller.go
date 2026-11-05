@@ -187,7 +187,7 @@ func (r *ECDSClusterReconciler) Reconcile(ctx context.Context, request reconcile
 	var shouldRequeue bool
 	if shouldRequeue, err = r.updateFinalizers(instance); shouldRequeue {
 		// Need to requeue because finalizer update does not change metadata.generation
-		return reconcile.Result{Requeue: true}, err
+		return reconcile.Result{Requeue: true}, err //nolint:staticcheck // SA1019: keep rate-limited requeue until a RequeueAfter migration
 	}
 
 	if err := r.ensureSynced(mgr, instance); err != nil {
@@ -201,7 +201,7 @@ func (r *ECDSClusterReconciler) Reconcile(ctx context.Context, request reconcile
 	if instance.IsDeleted() {
 		if shouldRequeue, err = r.deleteECDSCluster(mgr, instance); shouldRequeue {
 			// Need to requeue because finalizer update does not change metadata.generation
-			return reconcile.Result{Requeue: true}, err
+			return reconcile.Result{Requeue: true}, err //nolint:staticcheck // SA1019: keep rate-limited requeue until a RequeueAfter migration
 		}
 		return reconcile.Result{}, err
 	}
